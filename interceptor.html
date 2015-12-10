@@ -1,0 +1,130 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	</head>
+	<body>
+	<div>将左边输入框的值设置到右边输入框</div>
+	<input id="left" type="text" />
+	<input type="button" value=">>" onclick="getAndSet();" />
+	<input id="right" readonly="readonly" type="text" />
+	<div><span>绝对值处理拦截器状态：</span><span id="absoluteInterceptorStatus" style="color: red;">停止</span>
+		<input type="button" value="开启" onclick="start(AbsoluteInterceptor, 'absoluteInterceptorStatus');" />
+		<input type="button" value="停止" onclick="stop(AbsoluteInterceptor, 'absoluteInterceptorStatus');" />
+	</div>
+	<div><span>数字校验拦截器状态：</span><span id="numberInterceptorStatus" style="color: red;">停止</span>
+		<input type="button" value="开启" onclick="start(NumberInterceptor, 'numberInterceptorStatus');" />
+		<input type="button" value="停止" onclick="stop(NumberInterceptor, 'numberInterceptorStatus');" />
+	</div>
+	<div><span>正数校验拦截器状态：</span><span id="positiveInterceptorStatus" style="color: red;">停止</span>
+		<input type="button" value="开启" onclick="start(PositiveInterceptor, 'positiveInterceptorStatus');" />
+		<input type="button" value="停止" onclick="stop(PositiveInterceptor, 'positiveInterceptorStatus');" />
+	</div>
+	<div><span>负数校验拦截器状态：</span><span id="negativeInterceptorStatus" style="color: red;">停止</span>
+		<input type="button" value="开启" onclick="start(NegativeInterceptor, 'negativeInterceptorStatus');" />
+		<input type="button" value="停止" onclick="stop(NegativeInterceptor, 'negativeInterceptorStatus');" />
+	</div>
+	<div><span>手机号码校验拦截器状态：</span><span id="phoneInterceptorStatus" style="color: red;">停止</span>
+		<input type="button" value="开启" onclick="start(PhoneInterceptor, 'phoneInterceptorStatus');" />
+		<input type="button" value="停止" onclick="stop(PhoneInterceptor, 'phoneInterceptorStatus');" />
+	</div>
+	<script type="text/javascript" src="jquery-1.8.3.js"></script>
+	<script type="text/javascript" src="interceptor.js"></script>
+	<script type="text/javascript">
+	
+		var AbsoluteInterceptor = $.newInterceptor("AbsoluteInterceptor");
+		AbsoluteInterceptor.setPostHandle(function(result){
+			if(!isNaN(result)){
+				result = Math.abs(Number(result)).toString();
+			}
+			return result;
+		});
+		AbsoluteInterceptor.stop();
+	
+		var NumberInterceptor = $.newInterceptor("NumberInterceptor");
+		NumberInterceptor.setPreHandle(
+			function(value){
+				if(isNaN(value)){
+					alert("输入的值不是数字");
+					return false;
+				}else{
+					return true;
+				}
+			}
+		);
+		NumberInterceptor.stop();
+	
+		var PositiveInterceptor = $.newInterceptor("PositiveInterceptor");
+		PositiveInterceptor.setPreHandle(
+			function(value){
+				if(value < 0){
+					alert("输入的值不是正数");
+					return false;
+				}else{
+					return true;
+				}
+			}
+		);
+		PositiveInterceptor.stop();
+		
+		var NegativeInterceptor = $.newInterceptor("NegativeInterceptor");
+		NegativeInterceptor.setPreHandle(
+			function(value){
+				if(value > 0){
+					alert("输入的值不是负数");
+					return false;
+				}else{
+					return true;
+				}
+			}
+		);
+		NegativeInterceptor.stop();
+		
+		var PhoneInterceptor = $.newInterceptor("PhoneInterceptor");
+		PhoneInterceptor.setPreHandle(
+			function(value){
+				if(value.length != 11 || isNaN(value)){
+					alert("输入的值不是手机号码");
+					return false;
+				}else{
+					return true;
+				}
+			}
+		);
+		PhoneInterceptor.stop();
+		
+		getValue = AbsoluteInterceptor.intercept(getValue);
+		
+		setValue = NumberInterceptor.intercept(setValue);
+		setValue = PositiveInterceptor.intercept(setValue);
+		setValue = NegativeInterceptor.intercept(setValue);
+		setValue = PhoneInterceptor.intercept(setValue);
+		
+		function getAndSet(){
+			$("#right").val("");
+			var value = getValue();
+			setValue(value);
+		}
+		
+		function getValue(){
+			var value = $("#left").val();
+			return value;
+		}
+		
+		function setValue(value){
+			$("#right").val(value);
+		}
+		
+		function start(interceptor, tipId){
+			interceptor.start();
+			$("#" + tipId).css("color", "green").text("开启");
+		}
+		
+		function stop(interceptor, tipId){
+			interceptor.stop();
+			$("#" + tipId).css("color", "red").text("停止");
+		}
+		
+	</script>
+	</body>
+</html>
