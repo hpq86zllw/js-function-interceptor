@@ -94,11 +94,21 @@
 		PhoneInterceptor.stop();
 		
 		getValue = AbsoluteInterceptor.intercept(getValue);
+		// 释放拦截
+		// AbsoluteInterceptor.release(getValue);
 		
 		setValue = NumberInterceptor.intercept(setValue);
+		// 释放拦截
+		// NumberInterceptor.release(setValue);
 		setValue = PositiveInterceptor.intercept(setValue);
+		// 释放拦截
+		// PositiveInterceptor.release(setValue);
 		setValue = NegativeInterceptor.intercept(setValue);
+		// 释放拦截
+		// NegativeInterceptor.release(setValue);
 		setValue = PhoneInterceptor.intercept(setValue);
+		// 释放拦截
+		// PhoneInterceptor.release(setValue);
 		
 		function getAndSet(){
 			$("#right").val("");
